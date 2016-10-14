@@ -25,7 +25,7 @@ exit;
    FROM `post`
    LEFT JOIN `json`
    ON `post`.`json_id`=`json`.`json_id`
-   ORDER BY `date_added` DESC
+   ORDER BY `post_id` DESC
    LIMIT 500;
 EOF;
    $ret = $db->query($sql);
