@@ -29,13 +29,13 @@ exit;
    LIMIT 500;
 EOF;
    $ret = $db->query($sql);
-   
+
 $date_now = date(DATE_RSS);
 
 $pre_loop="<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <rss xmlns:atom=\"{$PROTOCOL}://www.w3.org/2005/Atom\" version=\"2.0\">
   <channel>
-    <atom:link href=\"{$PROTOCOL}://rss.{$ZERONET_HOST}\" rel=\"self\" type=\"application/rss+xml\"/>
+    <atom:link href=\"{$RSS_URI}\" rel=\"self\" type=\"application/rss+xml\"/>
     <title>ZeroMePlus</title>
     <link>{$PROTOCOL}://{$ZERONET_HOST}/{$ZEROME_URI}/</link>
     <image>
@@ -43,7 +43,7 @@ $pre_loop="<?xml version=\"1.0\" encoding=\"UTF-8\"?>
       <url>{$PROTOCOL}://{$ZERONET_HOST}/{$ZEROME_URI}/img/logo.png</url>
       <link>{$PROTOCOL}://{$ZERONET_HOST}/{$ZEROME_URI}/</link>
     </image>
-    <description>Raw feed from ZeroMePlus</description>
+    <description>Raw feed from ZeroMePlus,Github: https://github.com/MilitaryRiotLab/ZeroMe-RSS</description>
     <lastBuildDate>$date_now</lastBuildDate>
     <ttl>1</ttl>
 ";
@@ -56,7 +56,7 @@ $pre_loop="<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 	$body = htmlspecialchars($row['body'], ENT_XML1, 'UTF-8');
 	$directory = str_replace('data/users/','',$row['directory']);
 	$date = date(DATE_RSS,$row['date_added']);
-	   
+
 $loop.="
 	<item>
       <title>{$user_name} ({$cert_user_id})</title>
@@ -69,7 +69,7 @@ $loop.="
 
 
 	}
-	
+
 $post_loop=<<<EOF
 	</channel>
 </rss>
@@ -85,5 +85,5 @@ echo 'Jobs done';
 
 $db->close();
    // Reference sqlite
-   // {$PROTOCOL}://www.tutorialspoint.com/sqlite/sqlite_php.htm
+   // http://www.tutorialspoint.com/sqlite/sqlite_php.htm
 ?>
