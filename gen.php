@@ -81,6 +81,13 @@ $xmlfile = fopen($XML_OUTPUT, "w") or die("Unable to open file!");
 fwrite($xmlfile, $output);
 fclose($xmlfile);
 
+$output_gzip = gzencode($output,9);
+
+$xmlfile_gzip = fopen($XML_OUTPUT.'.gz', "w") or die("Unable to open gzip file!");
+fwrite($xmlfile_gzip, $output_gzip);
+fclose($xmlfile_gzip);
+
+
 echo 'Jobs done';
 
 $db->close();
