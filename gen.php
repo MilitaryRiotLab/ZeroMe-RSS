@@ -7,6 +7,7 @@ echo 'Only for cronjob';
 exit;
 }
 	date_default_timezone_set('UTC');
+
    class MyDB extends SQLite3
    {
       function __construct()
@@ -33,7 +34,7 @@ EOF;
 $date_now = date(DATE_RSS);
 
 $pre_loop="<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<rss xmlns:atom=\"{$PROTOCOL}://www.w3.org/2005/Atom\" version=\"2.0\">
+<rss xmlns:atom=\"http://www.w3.org/2005/Atom\" version=\"2.0\">
   <channel>
     <atom:link href=\"{$RSS_URI}\" rel=\"self\" type=\"application/rss+xml\"/>
     <title>ZeroMePlus</title>
@@ -45,19 +46,22 @@ $pre_loop="<?xml version=\"1.0\" encoding=\"UTF-8\"?>
     </image>
     <description>Raw feed from ZeroMePlus,Github: https://github.com/MilitaryRiotLab/ZeroMe-RSS</description>
     <lastBuildDate>$date_now</lastBuildDate>
-    <ttl>1</ttl>
+    <ttl>15</ttl>
 ";
 
-	while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
-	$user_name = htmlspecialchars($row['user_name'], ENT_XML1, 'UTF-8');
-	$cert_user_id = htmlspecialchars($row['cert_user_id'], ENT_XML1, 'UTF-8');
-	$site = htmlspecialchars($row['site'], ENT_XML1, 'UTF-8');
-	$post_id = htmlspecialchars($row['post_id'], ENT_XML1, 'UTF-8');
-	$body = htmlspecialchars($row['body'], ENT_XML1, 'UTF-8');
-	$directory = str_replace('data/users/','',$row['directory']);
-	$date = date(DATE_RSS,$row['date_added']);
+	while($row = $ret->fetchArray(SQLITE3_ASSOC) )
+	{
+		if( $row['date_added'] < time()) // No post from future, pinning post to top is not allowed
+		{
+		$user_name = htmlspecialchars($row['user_name'], ENT_XML1, 'UTF-8');
+		$cert_user_id = htmlspecialchars($row['cert_user_id'], ENT_XML1, 'UTF-8');
+		$site = htmlspecialchars($row['site'], ENT_XML1, 'UTF-8');
+		$post_id = htmlspecialchars($row['post_id'], ENT_XML1, 'UTF-8');
+		$body = htmlspecialchars($row['body'], ENT_XML1, 'UTF-8');
+		$directory = str_replace('data/users/','',$row['directory']);
+		$date = date(DATE_RSS,$row['date_added']);
 
-$loop.="
+	$loop.="
 	<item>
       <title>{$user_name} ({$cert_user_id})</title>
       <link>{$PROTOCOL}://{$ZERONET_HOST}/{$ZEROME_URI}/?Post/{$site}/{$directory}/{$post_id}</link>
@@ -65,8 +69,8 @@ $loop.="
       <pubDate>{$date}</pubDate>
       <guid>{$PROTOCOL}://{$ZERONET_HOST}/{$ZEROME_URI}/?Post/{$site}/{$directory}/{$post_id}</guid>
 	</item>
-";
-
+	";
+		}
 
 	}
 
